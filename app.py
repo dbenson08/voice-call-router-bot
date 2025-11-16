@@ -22,12 +22,16 @@ def voice():
 def handle_input():
     transcript = request.values.get('SpeechResult', 'No speech detected').lower()
     resp = VoiceResponse()
+    intent = 'agent'
     if 'buy' in transcript or 'purchase' in transcript:
+        intent = 'sales'
         resp.say('Routing to sales queue.')
     elif 'help' in transcript or 'support' in transcript or 'issue' in transcript:
+        intent = 'support'
         resp.say('Routing to support.')
     else:
         resp.say('Please hold for an agent.')
+    print(f"Transcript: {transcript}, Intent: {intent}")  # Log to console
     return str(resp)
 
 if __name__ == '__main__':
