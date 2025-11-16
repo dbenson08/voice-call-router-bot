@@ -20,15 +20,11 @@ def voice():
 
 @app.route('/handle-input', methods=['POST'])
 def handle_input():
-    transcript = request.values.get('SpeechResult', 'No speech detected')
-    intent_map = {'POSITIVE': 'sales', 'NEGATIVE': 'support', 'NEUTRAL': 'other'}
-    result = classifier(transcript)[0]
-    intent = intent_map.get(result['label'], 'other')
-    
+    transcript = request.values.get('SpeechResult', 'No speech detected').lower()
     resp = VoiceResponse()
-    if intent == 'sales':
+    if 'buy' in transcript or 'purchase' in transcript:
         resp.say('Routing to sales queue.')
-    elif intent == 'support':
+    elif 'help' in transcript or 'support' in transcript or 'issue' in transcript:
         resp.say('Routing to support.')
     else:
         resp.say('Please hold for an agent.')
