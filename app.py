@@ -27,18 +27,20 @@ def handle_input():
     
     intent = 'agent'  # default
     
-    if any(word in transcript for word in ['buy', 'purchase', 'order', 'shop', 'product']):
+    # More specific intents first
+    if any(word in transcript for word in ['track', 'tracking', 'delivery', 'ship', 'where is my order', 'status']):
+        intent = 'tracking'
+        resp.say('Routing to order tracking.')
+    elif any(word in transcript for word in ['bill', 'invoice', 'payment', 'charge', 'billing', 'statement']):
+        intent = 'billing'
+        resp.say('Routing to billing department.')
+    # Sales — but exclude if tracking/billing words are present
+    elif any(word in transcript for word in ['buy', 'purchase', 'shop', 'product']) and not any(word in transcript for word in ['track', 'tracking', 'delivery', 'status']):
         intent = 'sales'
         resp.say('Routing to sales queue.')
     elif any(word in transcript for word in ['help', 'support', 'issue', 'problem', 'broken', 'not working']):
         intent = 'support'
         resp.say('Routing to support.')
-    elif any(word in transcript for word in ['bill', 'invoice', 'payment', 'charge', 'billing']):
-        intent = 'billing'
-        resp.say('Routing to billing department.')
-    elif any(word in transcript for word in ['track', 'tracking', 'delivery', 'ship', 'where is my order']):
-        intent = 'tracking'
-        resp.say('Routing to order tracking.')
     else:
         resp.say('Please hold for an agent.')
     
