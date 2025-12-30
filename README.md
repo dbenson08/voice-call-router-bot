@@ -23,6 +23,7 @@ Call the Twilio number and say:
 - "I want to buy an umbrella" → "Routing to sales queue."
 - "I need help with my account" → "Routing to support."
 
-Transcript and intent logged in console.
+Transcript and intent logged in console and call_log.txt file:
+![Demo Screenshot](voicebot_call_log.png)
 
 Built as a portfolio project to demonstrate cloud telephony, NLP basics, and clean code.
