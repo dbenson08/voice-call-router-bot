@@ -1,14 +1,16 @@
 from flask import Flask, request
 from twilio.twiml.voice_response import VoiceResponse, Gather
-from transformers import pipeline
-from dotenv import load_dotenv
+from datetime import datetime
 import os
-import assemblyai as aai
 
 app = Flask(__name__)
-load_dotenv()
-aai.settings.api_key = os.getenv('ASSEMBLYAI_API_KEY')
-classifier = pipeline('text-classification', model='distilbert-base-uncased-finetuned-sst-2-english')
+
+LOG_FILE = "call_log.txt"
+
+def log_call(transcript, intent):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(LOG_FILE, "a") as f:
+        f.write(f"[{timestamp}] Transcript: {transcript} | Intent: {intent}\n")
 
 @app.route('/voice', methods=['POST'])
 def voice():
@@ -31,8 +33,16 @@ def handle_input():
         resp.say('Routing to support.')
     else:
         resp.say('Please hold for an agent.')
-    print(f"Transcript: {transcript}, Intent: {intent}")  # Log to console
+    
+    # Add goodbye message
+    resp.say("Thank you for calling. Have a great day!")
+    
+    # Log to console and file
+    print(f"Transcript: {transcript}, Intent: {intent}")
+    log_call(transcript.capitalize(), intent)
+    
     return str(resp)
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
