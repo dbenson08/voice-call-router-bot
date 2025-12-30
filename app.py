@@ -24,17 +24,24 @@ def voice():
 def handle_input():
     transcript = request.values.get('SpeechResult', 'No speech detected').lower()
     resp = VoiceResponse()
-    intent = 'agent'
-    if 'buy' in transcript or 'purchase' in transcript:
+    
+    intent = 'agent'  # default
+    
+    if any(word in transcript for word in ['buy', 'purchase', 'order', 'shop', 'product']):
         intent = 'sales'
         resp.say('Routing to sales queue.')
-    elif 'help' in transcript or 'support' in transcript or 'issue' in transcript:
+    elif any(word in transcript for word in ['help', 'support', 'issue', 'problem', 'broken', 'not working']):
         intent = 'support'
         resp.say('Routing to support.')
+    elif any(word in transcript for word in ['bill', 'invoice', 'payment', 'charge', 'billing']):
+        intent = 'billing'
+        resp.say('Routing to billing department.')
+    elif any(word in transcript for word in ['track', 'tracking', 'delivery', 'ship', 'where is my order']):
+        intent = 'tracking'
+        resp.say('Routing to order tracking.')
     else:
         resp.say('Please hold for an agent.')
     
-    # Add goodbye message
     resp.say("Thank you for calling. Have a great day!")
     
     # Log to console and file
